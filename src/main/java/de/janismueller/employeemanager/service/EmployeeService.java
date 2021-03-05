@@ -3,19 +3,22 @@ package de.janismueller.employeemanager.service;
 import de.janismueller.employeemanager.exception.UserNotFoundException;
 import de.janismueller.employeemanager.model.Employee;
 import de.janismueller.employeemanager.repository.EmployeeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
 
 @Service
+@Transactional
 public class EmployeeService {
-
     private final EmployeeRepository employeeRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    @Autowired
+    public EmployeeService(EmployeeRepository employeeRepo) {
+        this.employeeRepository = employeeRepo;
     }
 
     public Employee addEmployee(Employee employee) {
@@ -31,11 +34,12 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Employee findEmployee(Long id) {
-        return employeeRepository.findEmployeeById(id).orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
+    public Employee findEmployeeById(Long id) {
+        return employeeRepository.findEmployeeById(id)
+                .orElseThrow(() -> new UserNotFoundException("User by id " + id + " was not found"));
     }
 
-    public void deleteEmployee(Long id) {
+    public void deleteEmployee(Long id){
         employeeRepository.deleteEmployeeById(id);
     }
 }
